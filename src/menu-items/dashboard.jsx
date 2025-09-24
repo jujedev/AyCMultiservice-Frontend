@@ -1,5 +1,10 @@
 // assets
 import { DashboardOutlined, DeploymentUnitOutlined, BugOutlined } from '@ant-design/icons';
+import StyleIcon from '@mui/icons-material/Style';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import PersonIcon from '@mui/icons-material/Person';
+import BookIcon from '@mui/icons-material/Book';
+import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
 // icons
 const icons = {
   DashboardOutlined,
@@ -43,7 +48,7 @@ const dashboard = {
       title: 'Tarjetas',
       type: 'item',
       url: 'tarjetas',
-      icon: icons.DeploymentUnitOutlined,
+      icon: StyleIcon,
       breadcrumbs: false
     },
     {
@@ -51,7 +56,7 @@ const dashboard = {
       title: 'Clientes',
       type: 'item',
       url: 'clientes',
-      icon: icons.DeploymentUnitOutlined,
+      icon: PersonIcon,
       breadcrumbs: false
     },
     {
@@ -59,7 +64,7 @@ const dashboard = {
       title: 'Vehículos',
       type: 'item',
       url: 'vehiculos',
-      icon: icons.DeploymentUnitOutlined,
+      icon: DirectionsCarIcon,
       breadcrumbs: false
     },
     {
@@ -67,7 +72,7 @@ const dashboard = {
       title: 'Soluciones',
       type: 'item',
       url: 'soluciones',
-      icon: icons.DeploymentUnitOutlined,
+      icon: BookmarkAddedIcon,
       breadcrumbs: false
     },
     {
@@ -75,7 +80,7 @@ const dashboard = {
       title: 'Manuales',
       type: 'item',
       url: 'manuales',
-      icon: icons.DeploymentUnitOutlined,
+      icon: BookIcon,
       breadcrumbs: false
     }
   ]

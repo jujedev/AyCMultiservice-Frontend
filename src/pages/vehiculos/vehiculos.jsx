@@ -1,78 +1,156 @@
 /* eslint-disable prettier/prettier */
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-// project imports
-import CardMachine from 'components/cards/CardMachine';
-
-// images import
-import panificadoraImg from '../../assets/images/machines/panificadora.png'
-import cintatransportadoraImg from '../../assets/images/machines/cinta-transportadora.jpg'
-import ventiladorImg from '../../assets/images/machines/fan.jpg'
-
-// ==============================|| SAMPLE PAGE ||============================== //
+// MUI
+import { useMediaQuery, useTheme } from "@mui/system";
+import { DataGrid } from "@mui/x-data-grid";
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+  Box,
+  Button,
+} from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 export default function Vehiculos() {
-  const machines = [
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const [vehiculos, setVehiculos] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  // Abrir / cerrar menú de acciones
+  const handleMenuOpen = (event, row) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedRow(row);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedRow(null);
+  };
+
+  // Cargar vehículos desde backend
+  useEffect(() => {
+    axios
+      .get("http://192.168.11.104:8080/api/vehiculos")
+      .then((res) => {
+        setVehiculos(res.data);
+      })
+      .catch((err) => console.error("Error al cargar vehículos:", err));
+  }, []);
+
+  // Columnas Desktop
+  const columnsDesktop = [
+    { field: "id", headerName: "ID", width: 70 },
+    { field: "patente", headerName: "Patente", flex: 1 },
+    { field: "marca", headerName: "Marca", flex: 1 },
+    { field: "modelo", headerName: "Modelo", flex: 1 },
+    { field: "anio", headerName: "Año", flex: 1 },
     {
-      name: 'Empaquetadora 1',
-      image: panificadoraImg,
-      description: "Controlada por PLC S7-1200 y medidor Sentron PAC3200",
-      status: "activo",
-      metrics: [
-        { title: "Disponibilidad", count: 95, unit: "%" },
-        { title: "Performance", count: 88, unit: "%" },
-        { title: "Calidad", count: 92, unit: "%" },
-        { title: "OEE", count: 77, unit: "%" }
-      ]
+      field: "cliente",
+      headerName: "Cliente",
+      flex: 1,
+      valueGetter: (params) =>
+        params.row.cliente
+          ? `${params.row.cliente.nombre} ${params.row.cliente.apellido}`
+          : "Sin asignar",
     },
     {
-      name: "Ventilador",
-      image: ventiladorImg,
-      status: "inactivo",
-      extra: "Solo ventilador, sin métricas"
+      field: "acciones",
+      headerName: "Acciones",
+      width: 120,
+      sortable: false,
+      renderCell: (params) => (
+        <>
+          <IconButton onClick={(e) => handleMenuOpen(e, params.row)}>
+            <MoreVertIcon />
+          </IconButton>
+        </>
+      ),
     },
-    {
-      name: "Cinta transportadora",
-      image: cintatransportadoraImg,
-      status: "activo",
-      metrics: [
-        { title: "Performance", count: 88, unit: "%" }
-      ]
-    },
-    {
-      name: "Empaquetadora 2",
-      image: panificadoraImg,
-      description: "Controlada por PLC S7-1200 y medidor Sentron PAC3200",
-      status: "activo",
-      metrics: [
-        { title: "Disponibilidad", count: 95, unit: "%" },
-        { title: "Performance", count: 88, unit: "%" },
-        { title: "Calidad", count: 92, unit: "%" },
-        { title: "OEE", count: 77, unit: "%" }
-      ]
-    }
   ];
 
-  return (
-    <Grid container rowSpacing={4.5} columnSpacing={2.75} alignItems={'stretch'}>
-      <Grid sx={{ mb: -2.25 }} size={12}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h5">Información sobre las máquinas en la fábrica</Typography>
-          <Button variant="outlined" disabled>
-            Agregar máquina +
-          </Button>
-        </Box>
-      </Grid>
+  // Columnas Mobile
+  const columnsMobile = [
+    { field: "id", headerName: "ID", width: 40 },
+    { field: "patente", headerName: "Patente", flex: 1 },
+    { field: "marca", headerName: "Marca", flex: 1 },
+    {
+      field: "acciones",
+      headerName: "⚙️",
+      width: 60,
+      sortable: false,
+      renderCell: (params) => (
+        <>
+          <IconButton onClick={(e) => handleMenuOpen(e, params.row)}>
+            <MoreVertIcon />
+          </IconButton>
+        </>
+      ),
+    },
+  ];
 
-      {/*Get Machines*/}
-      {machines.map((m, idx) => (
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={{idx}}>
-          <CardMachine {...m} />
-        </Grid>
-      ))}
-    </Grid>
+  // Acciones
+  const handleEditar = () => {
+    console.log("Editar vehículo:", selectedRow);
+    handleMenuClose();
+  };
+
+  const handleEliminar = () => {
+    console.log("Eliminar vehículo:", selectedRow);
+    handleMenuClose();
+  };
+
+  return (
+    <Box sx={{ height: 600, width: "100%" }}>
+      {/* Header con título y botón */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 2,
+        }}
+      >
+        <Typography variant="h5">Vehículos</Typography>
+        <Button variant="contained" color="primary">
+          Crear vehículo +
+        </Button>
+      </Box>
+
+      {/* Tabla de vehículos */}
+      <DataGrid
+        rows={vehiculos}
+        columns={isMobile ? columnsMobile : columnsDesktop}
+        pageSize={10}
+        rowsPerPageOptions={[10, 25, 50]}
+        getRowId={(row) => row.id}
+        sx={{
+          backgroundColor: "white",
+          borderRadius: 2,
+          boxShadow: 2,
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: "#f5f5f5",
+            fontWeight: "bold",
+          },
+          "& .MuiDataGrid-cell": {
+            borderBottom: "1px solid #eee",
+          },
+        }}
+      />
+
+      {/* Menú de acciones */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleEditar}>Editar</MenuItem>
+        <MenuItem onClick={handleEliminar}>Eliminar</MenuItem>
+      </Menu>
+    </Box>
   );
 }

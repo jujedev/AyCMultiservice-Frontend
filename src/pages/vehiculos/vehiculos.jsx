@@ -12,6 +12,7 @@ import {
   Typography,
   Box,
   Button,
+  Link
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
@@ -43,7 +44,7 @@ export default function Vehiculos() {
       .catch((err) => console.error("Error al cargar vehículos:", err));
   }, []);
 
-  // Columnas Desktop
+  // Columnas tabla desktop
   const columnsDesktop = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "patente", headerName: "Patente", flex: 1 },
@@ -51,13 +52,18 @@ export default function Vehiculos() {
     { field: "modelo", headerName: "Modelo", flex: 1 },
     { field: "anio", headerName: "Año", flex: 1 },
     {
-      field: "cliente",
-      headerName: "Cliente",
+      field: "clienteDni",
+      headerName: "Cliente (DNI)",
       flex: 1,
-      valueGetter: (params) =>
-        params.row.cliente
-          ? `${params.row.cliente.nombre} ${params.row.cliente.apellido}`
-          : "Sin asignar",
+      renderCell: (params) => (
+          <Link
+            component="button"
+            variant="body2"
+            onClick={() => console.log("Ir a cliente:", params.row.clienteDni)}
+          >
+            {params.row.clienteDni || "N/A"}
+          </Link>
+        ),
     },
     {
       field: "acciones",
@@ -74,11 +80,28 @@ export default function Vehiculos() {
     },
   ];
 
-  // Columnas Mobile
+  // Columnas versión mobile (más reducida)
   const columnsMobile = [
-    { field: "id", headerName: "ID", width: 40 },
+    { field: "id", headerName: "ID", width: 50 },
     { field: "patente", headerName: "Patente", flex: 1 },
     { field: "marca", headerName: "Marca", flex: 1 },
+    {
+      field: "clienteDni",
+      headerName: "Cliente (DNI)",
+      flex: 1,
+      renderCell: (params) => {
+        const cliente = params.row.cliente;
+        return (
+          <Link
+            component="button"
+            variant="body2"
+            onClick={() => console.log("Ir a cliente:", params.row.clienteDni)}
+          >
+            {params.row.clienteDni || "N/A"}
+          </Link>
+        );
+      },
+    },
     {
       field: "acciones",
       headerName: "⚙️",
@@ -94,7 +117,7 @@ export default function Vehiculos() {
     },
   ];
 
-  // Acciones
+  // Acciones de ejemplo
   const handleEditar = () => {
     console.log("Editar vehículo:", selectedRow);
     handleMenuClose();
@@ -117,7 +140,7 @@ export default function Vehiculos() {
       >
         <Typography variant="h5">Vehículos</Typography>
         <Button variant="contained" color="primary">
-          Crear vehículo +
+          Crear Vehículo +
         </Button>
       </Box>
 
@@ -129,7 +152,7 @@ export default function Vehiculos() {
         rowsPerPageOptions={[10, 25, 50]}
         getRowId={(row) => row.id}
         sx={{
-          backgroundColor: "white",
+          backgroundColor: "#fff",
           borderRadius: 2,
           boxShadow: 2,
           "& .MuiDataGrid-columnHeaders": {

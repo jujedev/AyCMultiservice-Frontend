@@ -12,17 +12,24 @@ import {
   Typography,
   Box,
   Button,
+  Drawer,
+  Divider,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-export default function Clientes() {
+import ClienteDrawer from "../../components/ClienteDrawer";
 
+export default function Clientes() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [clientes, setClientes] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false); // 👈 Drawer lateral
+  const [clienteDetalle, setClienteDetalle] = useState(null);
+
 
   // Abrir / cerrar menú de acciones
   const handleMenuOpen = (event, row) => {
@@ -31,8 +38,23 @@ export default function Clientes() {
   };
   const handleMenuClose = () => {
     setAnchorEl(null);
-    setSelectedRow(null);
   };
+
+  // Abrir Drawer con info
+  const handleInfo = () => {
+    setDrawerOpen(true);
+    handleMenuClose();
+  };
+
+  const handleOpenDrawer = (row) => {
+  setClienteDetalle(row);
+  setDrawerOpen(true);
+};
+
+const handleCloseDrawer = () => {
+  setDrawerOpen(false);
+  setClienteDetalle(null);
+};
 
   // Cargar clientes desde backend
   useEffect(() => {
@@ -88,17 +110,6 @@ export default function Clientes() {
     },
   ];
 
-  // Acciones de ejemplo
-  const handleEditar = () => {
-    console.log("Editar cliente:", selectedRow);
-    handleMenuClose();
-  };
-
-  const handleEliminar = () => {
-    console.log("Eliminar cliente:", selectedRow);
-    handleMenuClose();
-  };
-
   return (
     <Box sx={{ height: 600, width: "100%" }}>
       {/* Header con título y botón */}
@@ -122,16 +133,17 @@ export default function Clientes() {
         pageSize={10}
         rowsPerPageOptions={[10, 25, 50]}
         getRowId={(row) => row.id} // 👈 clave única
+        onRowDoubleClick={(params) => handleOpenDrawer(params.row)}
         sx={{
           backgroundColor: theme.palette.secondary.A100,
           borderRadius: 2,
-          boxShadow: 2,                    // Sombra ligera
+          boxShadow: 2,
           "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: "#f5f5f5",   // 👈 Fondo gris para el header
+            backgroundColor: "#f5f5f5",
             fontWeight: "bold",
           },
           "& .MuiDataGrid-cell": {
-            borderBottom: "1px solid #eee", // Línea divisoria más suave
+            borderBottom: "1px solid #eee",
           },
         }}
       />
@@ -142,10 +154,24 @@ export default function Clientes() {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={handleEditar}>Vehiculos</MenuItem>
-        <MenuItem onClick={handleEditar}>Editar</MenuItem>
-        <MenuItem onClick={handleEliminar}>Eliminar</MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleOpenDrawer(selectedRow); // abrir drawer con datos del cliente
+            handleMenuClose();
+          }}
+        >
+          Información
+        </MenuItem>
+        <MenuItem onClick={() => {console.log("Editar")}}>Editar</MenuItem>
+        <MenuItem onClick={() => {console.log("Eliminar")}}>Eliminar</MenuItem>
       </Menu>
+
+      {/* Drawer lateral */}
+      <ClienteDrawer
+        open={drawerOpen}
+        onClose={handleCloseDrawer}
+        cliente={clienteDetalle}
+      />
     </Box>
   );
 }

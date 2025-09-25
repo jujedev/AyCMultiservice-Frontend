@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+import { Link, useNavigate } from 'react-router-dom';
+
 // MUI
 import { useMediaQuery, useTheme } from "@mui/system";
 import { DataGrid } from "@mui/x-data-grid";
@@ -21,6 +23,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ClienteDrawer from "../../components/ClienteDrawer";
 
 export default function Clientes() {
+  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -49,12 +52,25 @@ export default function Clientes() {
   const handleOpenDrawer = (row) => {
   setClienteDetalle(row);
   setDrawerOpen(true);
-};
+  };
 
-const handleCloseDrawer = () => {
-  setDrawerOpen(false);
-  setClienteDetalle(null);
-};
+  const handleCloseDrawer = () => {
+    setDrawerOpen(false);
+    setClienteDetalle(null);
+  };
+
+  const handleDelete = async (id) => {
+  if (window.confirm("¿Seguro que deseas eliminar este cliente?")) {
+    try {
+      await axios.delete(`http://192.168.11.104:8080/api/clientes/${id}`);
+      // refrescar lista en frontend
+      setClientes(clientes.filter((c) => c.id !== id));
+    } catch (err) {
+      console.error("Error al eliminar cliente:", err);
+      alert("Hubo un error al eliminar el cliente");
+    }
+  }
+  };
 
   // Cargar clientes desde backend
   useEffect(() => {
@@ -121,7 +137,8 @@ const handleCloseDrawer = () => {
         }}
       >
         <Typography variant="h5">Clientes</Typography>
-        <Button variant="contained" color="primary">
+        <Button variant="contained" color="primary" LinkComponent={Link} to="/clientes/nuevo">
+          
           Crear cliente +
         </Button>
       </Box>
@@ -156,14 +173,19 @@ const handleCloseDrawer = () => {
       >
         <MenuItem
           onClick={() => {
-            handleOpenDrawer(selectedRow); // abrir drawer con datos del cliente
+            handleOpenDrawer(selectedRow);
             handleMenuClose();
           }}
         >
           Información
         </MenuItem>
-        <MenuItem onClick={() => {console.log("Editar")}}>Editar</MenuItem>
-        <MenuItem onClick={() => {console.log("Eliminar")}}>Eliminar</MenuItem>
+        <MenuItem onClick={() => {
+          navigate(`/clientes/${selectedRow.id}/editar`);}}
+          >Editar</MenuItem>
+        <MenuItem onClick={() => {
+          handleDelete(selectedRow.id);
+          handleMenuClose();}}
+          >Eliminar</MenuItem>
       </Menu>
 
       {/* Drawer lateral */}

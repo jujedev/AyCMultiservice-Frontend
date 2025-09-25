@@ -25,7 +25,11 @@ const AddDevice = Loadable(lazy(() => import('pages/devices/addDevice')));
 const ConfigDevice = Loadable(lazy(() => import('pages/devices/configDevice')));
 
 const Tarjetas = Loadable(lazy(() => import('pages/tarjetas/tarjetas')));
+
 const Clientes = Loadable(lazy(() => import('pages/clientes/clientes')));
+const CrearCliente = Loadable(lazy(() => import('pages/clientes/CrearCliente')));
+const EditarCliente = Loadable(lazy(() => import('pages/clientes/EditarCliente')));
+
 const Vehiculos = Loadable(lazy(() => import('pages/vehiculos/vehiculos')));
 const Soluciones = Loadable(lazy(() => import('pages/soluciones/soluciones')));
 const Manuales = Loadable(lazy(() => import('pages/manuales/manuales')));
@@ -78,6 +82,14 @@ const MainRoutes = {
         {
           path: 'clientes',
           element: <Clientes />
+        },
+        {
+          path: '/clientes/nuevo',
+          element: <CrearCliente />
+        },
+        {
+          path: '/clientes/:id/editar',
+          element: <EditarCliente />
         },
         {
           path: 'vehiculos',

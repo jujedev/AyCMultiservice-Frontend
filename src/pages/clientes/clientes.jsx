@@ -14,6 +14,13 @@ import {
   Typography,
   Box,
   Button,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
   Drawer,
   Divider,
 } from "@mui/material";
@@ -33,6 +40,18 @@ export default function Clientes() {
   const [drawerOpen, setDrawerOpen] = useState(false); // 👈 Drawer lateral
   const [clienteDetalle, setClienteDetalle] = useState(null);
 
+  {/* Snackbar */}
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success", // "success" | "error" | "warning" | "info"
+  });
+  const [openDialog, setOpenDialog] = useState(false);
+  const [clienteAEliminar, setClienteAEliminar] = useState(null);
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   // Abrir / cerrar menú de acciones
   const handleMenuOpen = (event, row) => {
@@ -59,18 +78,33 @@ export default function Clientes() {
     setClienteDetalle(null);
   };
 
-  const handleDelete = async (id) => {
-  if (window.confirm("¿Seguro que deseas eliminar este cliente?")) {
-    try {
-      await axios.delete(`http://192.168.11.104:8080/api/clientes/${id}`);
-      // refrescar lista en frontend
-      setClientes(clientes.filter((c) => c.id !== id));
-    } catch (err) {
-      console.error("Error al eliminar cliente:", err);
-      alert("Hubo un error al eliminar el cliente");
-    }
+  const handleCloseDialog = () => {
+  setOpenDialog(false);
+  setClienteAEliminar(null);
+};
+
+const handleDelete = async () => {
+  if (!clienteAEliminar) return;
+
+  try {
+    await axios.delete(`http://192.168.11.104:8080/api/clientes/${clienteAEliminar.id}`);
+    setClientes(clientes.filter((c) => c.id !== clienteAEliminar.id));
+    setClienteAEliminar(null);
+
+    setSnackbar({
+      open: true,
+      message: "Cliente eliminado correctamente",
+      severity: "success",
+    });
+  } catch (err) {
+    console.error("Error al eliminar cliente:", err);
+    setSnackbar({
+      open: true,
+      message: "Error al eliminar el cliente",
+      severity: "error",
+    });
   }
-  };
+};
 
   // Cargar clientes desde backend
   useEffect(() => {
@@ -138,7 +172,6 @@ export default function Clientes() {
       >
         <Typography variant="h5">Clientes</Typography>
         <Button variant="contained" color="primary" LinkComponent={Link} to="/clientes/nuevo">
-          
           Crear cliente +
         </Button>
       </Box>
@@ -183,7 +216,8 @@ export default function Clientes() {
           navigate(`/clientes/${selectedRow.id}/editar`);}}
           >Editar</MenuItem>
         <MenuItem onClick={() => {
-          handleDelete(selectedRow.id);
+          setClienteAEliminar(selectedRow);
+          setOpenDialog(true);
           handleMenuClose();}}
           >Eliminar</MenuItem>
       </Menu>
@@ -194,6 +228,47 @@ export default function Clientes() {
         onClose={handleCloseDrawer}
         cliente={clienteDetalle}
       />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Confirmar eliminación</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            ¿Seguro que deseas eliminar al cliente{" "}
+            <strong>{clienteAEliminar?.nombre} {clienteAEliminar?.apellido}</strong>?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="inherit">
+            Cancelar
+          </Button>
+          <Button
+            onClick={() => {
+              handleDelete(clienteAEliminar.id);
+              handleCloseDialog();
+            }}
+            color="error"
+            variant="contained"
+          >
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

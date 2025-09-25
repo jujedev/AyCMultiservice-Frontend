@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { useEffect, useState } from "react";
+import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 // MUI
@@ -11,12 +12,12 @@ import {
   MenuItem,
   Typography,
   Box,
-  Button,
-  Link
-} from "@mui/material";
+  Button
+  } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 export default function Vehiculos() {
+  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -139,7 +140,7 @@ export default function Vehiculos() {
         }}
       >
         <Typography variant="h5">Vehículos</Typography>
-        <Button variant="contained" color="primary">
+        <Button variant="contained" color="primary" LinkComponent={Link} to="/vehiculos/nuevo">
           Crear Vehículo +
         </Button>
       </Box>

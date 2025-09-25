@@ -65,7 +65,7 @@ export default function EditarCliente() {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3, backgroundColor: 'white', boxShadow: 2, borderRadius: 2 }}>
       <Typography variant="h5" mb={2}>
         Editar Cliente
       </Typography>
@@ -102,7 +102,7 @@ export default function EditarCliente() {
             <TableCell>Modelo</TableCell>
             <TableCell>Patente</TableCell>
             <TableCell>Año</TableCell>
-            <TableCell>Acciones</TableCell>
+            <TableCell>⚙️</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

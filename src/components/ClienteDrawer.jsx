@@ -28,6 +28,24 @@ export default function ClienteDrawer({ open, onClose, cliente }) {
     setTab(newValue);
   };
 
+  const handleWhatsApp = () => {
+    if (cliente.telefono) {
+      window.open(`https://wa.me/${cliente.telefono}?text=Hola ${cliente.nombre}, te escribo desde AyC Multiservice`, "_blank");
+    }
+  };
+
+  const handlePhone = () => {
+    if (cliente.telefono) {
+      window.open(`tel:${cliente.telefono}`);
+    }
+  };
+
+  const handleEmail = () => {
+    if (cliente.email) {
+      window.open(`mailto:${cliente.email}`);
+    }
+  };
+
   return (
     <Drawer
       anchor="right"
@@ -55,13 +73,13 @@ export default function ClienteDrawer({ open, onClose, cliente }) {
 
       {/* Acciones rápidas */}
       <Stack direction="row" spacing={2} justifyContent="center" sx={{ p: 2 }}>
-        <IconButton color="success">
+        <IconButton color="success" onClick={handleWhatsApp}>
           <WhatsAppIcon />
         </IconButton>
-        <IconButton color="primary">
+        <IconButton color="primary" onClick={handlePhone}>
           <PhoneIcon />
         </IconButton>
-        <IconButton color="error">
+        <IconButton color="error" onClick={handleEmail}>
           <EmailIcon />
         </IconButton>
       </Stack>

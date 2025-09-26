@@ -1,28 +1,17 @@
 /* eslint-disable prettier/prettier */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Stack,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  IconButton,
-  Divider,
+  Box, Typography, TextField, Button, Stack, Table,
+  TableHead, TableRow, TableCell, TableBody, IconButton, Divider
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import SettingsIcon from '@mui/icons-material/Settings';
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function CrearCliente() {
+export default function EditarVehiculo() {
   const navigate = useNavigate();
+  const { id } = useParams();
 
-  // Estado cliente
   const [cliente, setCliente] = useState({
     nombre: "",
     apellido: "",
@@ -32,13 +21,21 @@ export default function CrearCliente() {
     vehiculos: [],
   });
 
-  // Estado vehículo en edición
   const [vehiculo, setVehiculo] = useState({
     marca: "",
     modelo: "",
     patente: "",
     anio: "",
   });
+
+  // 🔹 Cargar cliente desde backend
+  useEffect(() => {
+    axios.get(`http://192.168.11.104:8080/api/clientes/${id}`)
+      .then(res => {
+        setCliente(res.data);
+      })
+      .catch(err => console.error("Error al cargar cliente:", err));
+  }, [id]);
 
   const handleChangeCliente = (e) => {
     setCliente({ ...cliente, [e.target.name]: e.target.value });
@@ -50,7 +47,7 @@ export default function CrearCliente() {
 
   const agregarVehiculo = () => {
     setCliente({ ...cliente, vehiculos: [...cliente.vehiculos, vehiculo] });
-    setVehiculo({ marca: "", modelo: "", patente: "" , anio: ""}); // reset form
+    setVehiculo({ marca: "", modelo: "", patente: "", anio: "" });
   };
 
   const eliminarVehiculo = (index) => {
@@ -60,17 +57,17 @@ export default function CrearCliente() {
 
   const handleSubmit = async () => {
     try {
-      await axios.post("http://192.168.11.104:8080/api/clientes", cliente);
+      await axios.put(`http://192.168.11.104:8080/api/clientes/${id}`, cliente);
       navigate("/clientes");
     } catch (err) {
-      console.error("Error al crear cliente:", err);
+      console.error("Error al actualizar cliente:", err);
     }
   };
 
   return (
-    <Box sx={{ p: 4, backgroundColor: 'white', boxShadow: 2, borderRadius: 4 }}>
+    <Box sx={{ p: 3, backgroundColor: 'white', boxShadow: 2, borderRadius: 2 }}>
       <Typography variant="h5" mb={2}>
-        Crear Cliente
+        Editar Cliente
       </Typography>
 
       {/* Datos del cliente */}
@@ -105,11 +102,11 @@ export default function CrearCliente() {
             <TableCell>Modelo</TableCell>
             <TableCell>Patente</TableCell>
             <TableCell>Año</TableCell>
-            <TableCell><SettingsIcon /></TableCell>
+            <TableCell>⚙️</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {cliente.vehiculos.map((v, index) => (
+          {cliente.vehiculos?.map((v, index) => (
             <TableRow key={index}>
               <TableCell>{v.marca}</TableCell>
               <TableCell>{v.modelo}</TableCell>
@@ -127,7 +124,7 @@ export default function CrearCliente() {
 
       <Stack direction="row" spacing={2} mt={3}>
         <Button variant="contained" color="primary" onClick={handleSubmit}>
-          Guardar
+          Guardar cambios
         </Button>
         <Button variant="outlined" onClick={() => navigate("/clientes")}>
           Cancelar

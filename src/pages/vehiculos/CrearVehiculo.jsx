@@ -56,7 +56,7 @@ export default function CrearVehiculo() {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 8, backgroundColor: 'white', boxShadow: 2, borderRadius: 4  }}>
       <Typography variant="h5" mb={2}>
         Crear Vehículo
       </Typography>
@@ -66,6 +66,7 @@ export default function CrearVehiculo() {
           label="Patente"
           name="patente"
           value={vehiculo.patente}
+          inputProps={{ maxLength: 10 }}
           onChange={handleChange}
         />
         <TextField

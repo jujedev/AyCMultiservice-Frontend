@@ -32,6 +32,7 @@ const EditarCliente = Loadable(lazy(() => import('pages/clientes/EditarCliente')
 
 const Vehiculos = Loadable(lazy(() => import('pages/vehiculos/vehiculos')));
 const CrearVehiculo = Loadable(lazy(() => import('pages/vehiculos/CrearVehiculo')));
+const EditarVehiculo = Loadable(lazy(() => import('pages/vehiculos/EditarVehiculo')));
 
 const Soluciones = Loadable(lazy(() => import('pages/soluciones/soluciones')));
 const Manuales = Loadable(lazy(() => import('pages/manuales/manuales')));
@@ -100,6 +101,10 @@ const MainRoutes = {
         {
           path: '/vehiculos/nuevo',
           element: <CrearVehiculo />
+        },
+        {
+          path: '/vehiculos/:id/editar',
+          element: <EditarVehiculo />
         },
         {
           path: 'soluciones',

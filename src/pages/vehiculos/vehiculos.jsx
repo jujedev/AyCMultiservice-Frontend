@@ -12,7 +12,14 @@ import {
   MenuItem,
   Typography,
   Box,
-  Button
+  Button,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions
   } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
@@ -24,6 +31,21 @@ export default function Vehiculos() {
   const [vehiculos, setVehiculos] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [vehiculoDetalle, setVehiculoDetalle] = useState(null);
+
+  {/* Snackbar */}
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const [openDialog, setOpenDialog] = useState(false);
+  const [vehiculoAEliminar, setVehiculoAEliminar] = useState(null);
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   // Abrir / cerrar menú de acciones
   const handleMenuOpen = (event, row) => {
@@ -33,6 +55,34 @@ export default function Vehiculos() {
   const handleMenuClose = () => {
     setAnchorEl(null);
     setSelectedRow(null);
+  };
+
+  const handleCloseDialog = () => {
+  setOpenDialog(false);
+  setVehiculoAEliminar(null);
+  };
+
+  const handleDelete = async () => {
+    if (!vehiculoAEliminar) return;
+
+    try {
+      await axios.delete(`http://192.168.11.104:8080/api/vehiculos/${vehiculoAEliminar.id}`);
+      setVehiculos(vehiculos.filter((c) => c.id !== vehiculoAEliminar.id));
+      setVehiculoAEliminar(null);
+
+      setSnackbar({
+        open: true,
+        message: "Cliente eliminado correctamente",
+        severity: "success",
+      });
+    } catch (err) {
+      console.error("Error al eliminar cliente:", err);
+      setSnackbar({
+        open: true,
+        message: "Error al eliminar el cliente",
+        severity: "error",
+      });
+    }
   };
 
   // Cargar vehículos desde backend
@@ -172,9 +222,65 @@ export default function Vehiculos() {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={handleEditar}>Editar</MenuItem>
-        <MenuItem onClick={handleEliminar}>Eliminar</MenuItem>
+        
+        <MenuItem onClick={() => {
+          navigate(`/vehiculos/${selectedRow.id}/editar`);
+        }}
+        >
+          Editar
+        </MenuItem>
+        
+        <MenuItem onClick={() => {
+          setVehiculoAEliminar(selectedRow);
+          setOpenDialog(true);
+          handleMenuClose();
+          }}
+          >
+            Eliminar
+          </MenuItem>
       </Menu>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Confirmar eliminación</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            ¿Seguro que deseas eliminar el vehichulo{" "}
+            <strong>{vehiculoAEliminar?.patente} {vehiculoAEliminar?.apellido}</strong>?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="inherit">
+            Cancelar
+          </Button>
+          <Button
+            onClick={() => {
+              handleDelete(vehiculoAEliminar.id);
+              handleCloseDialog();
+            }}
+            color="error"
+            variant="contained"
+          >
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </Box>
   );
 }

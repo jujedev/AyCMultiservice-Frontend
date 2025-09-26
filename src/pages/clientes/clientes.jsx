@@ -37,14 +37,14 @@ export default function Clientes() {
   const [clientes, setClientes] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [drawerOpen, setDrawerOpen] = useState(false); // 👈 Drawer lateral
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [clienteDetalle, setClienteDetalle] = useState(null);
 
   {/* Snackbar */}
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
-    severity: "success", // "success" | "error" | "warning" | "info"
+    severity: "success",
   });
   const [openDialog, setOpenDialog] = useState(false);
   const [clienteAEliminar, setClienteAEliminar] = useState(null);

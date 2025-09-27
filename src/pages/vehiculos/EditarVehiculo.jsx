@@ -30,7 +30,7 @@ export default function EditarVehiculo() {
 
   // 🔹 Cargar cliente desde backend
   useEffect(() => {
-    axios.get(`http://192.168.11.104:8080/api/clientes/${id}`)
+    axios.get(`http://localhost:8080/api/clientes/${id}`)
       .then(res => {
         setCliente(res.data);
       })
@@ -57,7 +57,7 @@ export default function EditarVehiculo() {
 
   const handleSubmit = async () => {
     try {
-      await axios.put(`http://192.168.11.104:8080/api/clientes/${id}`, cliente);
+      await axios.put(`http://localhost:8080/api/clientes/${id}`, cliente);
       navigate("/clientes");
     } catch (err) {
       console.error("Error al actualizar cliente:", err);
@@ -72,7 +72,12 @@ export default function EditarVehiculo() {
 
       {/* Datos del cliente */}
       <Stack spacing={2} mb={3}>
-        <TextField label="Nombre" name="nombre" value={cliente.nombre} onChange={handleChangeCliente} />
+        <TextField 
+          label="Nombre" 
+          name="nombre" 
+          value={vehiculo.patente} 
+          onChange={handleChangeVehiculo} 
+        />
         <TextField label="Apellido" name="apellido" value={cliente.apellido} onChange={handleChangeCliente} />
         <TextField label="DNI" name="dni" value={cliente.dni} onChange={handleChangeCliente} />
         <TextField label="Teléfono" name="telefono" value={cliente.telefono} onChange={handleChangeCliente} />
@@ -95,7 +100,7 @@ export default function EditarVehiculo() {
         </Button>
       </Stack>
 
-      <Table>
+      {/*<Table>
         <TableHead>
           <TableRow>
             <TableCell>Marca</TableCell>
@@ -120,7 +125,7 @@ export default function EditarVehiculo() {
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+      </Table>*/}
 
       <Stack direction="row" spacing={2} mt={3}>
         <Button variant="contained" color="primary" onClick={handleSubmit}>

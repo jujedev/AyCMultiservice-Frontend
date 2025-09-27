@@ -60,7 +60,7 @@ export default function CrearCliente() {
 
   const handleSubmit = async () => {
     try {
-      await axios.post("http://192.168.11.104:8080/api/clientes", cliente);
+      await axios.post("http://localhost:8080/api/clientes", cliente);
       navigate("/clientes");
     } catch (err) {
       console.error("Error al crear cliente:", err);

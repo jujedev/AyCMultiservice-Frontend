@@ -30,7 +30,7 @@ export default function EditarCliente() {
 
   // 🔹 Cargar cliente desde backend
   useEffect(() => {
-    axios.get(`http://192.168.11.104:8080/api/clientes/${id}`)
+    axios.get(`http://localhost:8080/api/clientes/${id}`)
       .then(res => {
         setCliente(res.data);
       })
@@ -57,7 +57,7 @@ export default function EditarCliente() {
 
   const handleSubmit = async () => {
     try {
-      await axios.put(`http://192.168.11.104:8080/api/clientes/${id}`, cliente);
+      await axios.put(`http://localhost:8080/api/clientes/${id}`, cliente);
       navigate("/clientes");
     } catch (err) {
       console.error("Error al actualizar cliente:", err);

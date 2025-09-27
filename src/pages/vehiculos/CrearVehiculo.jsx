@@ -28,7 +28,7 @@ export default function CrearVehiculo() {
 
   useEffect(() => {
     axios
-      .get("http://192.168.11.104:8080/api/clientes")
+      .get("http://localhost:8080/api/clientes")
       .then((res) => setClientes(res.data))
       .catch((err) => console.error("Error al cargar clientes:", err));
   }, []);
@@ -46,7 +46,7 @@ export default function CrearVehiculo() {
     try {
       const { clienteId, ...vehiculoData } = vehiculo;
       await axios.post(
-        `http://192.168.11.104:8080/api/vehiculos/${clienteId}`,
+        `http://localhost:8080/api/vehiculos/${clienteId}`,
         vehiculoData
       );
       navigate("/vehiculos");

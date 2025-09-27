@@ -20,11 +20,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
-  DialogActions,
-  Drawer,
-  Divider,
+  DialogActions
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 import ClienteDrawer from "../../components/ClienteDrawer";
@@ -62,12 +59,6 @@ export default function Clientes() {
     setAnchorEl(null);
   };
 
-  // Abrir Drawer con info
-  const handleInfo = () => {
-    setDrawerOpen(true);
-    handleMenuClose();
-  };
-
   const handleOpenDrawer = (row) => {
   setClienteDetalle(row);
   setDrawerOpen(true);
@@ -87,7 +78,7 @@ const handleDelete = async () => {
   if (!clienteAEliminar) return;
 
   try {
-    await axios.delete(`http://192.168.11.104:8080/api/clientes/${clienteAEliminar.id}`);
+    await axios.delete(`http://localhost:8080/api/clientes/${clienteAEliminar.id}`);
     setClientes(clientes.filter((c) => c.id !== clienteAEliminar.id));
     setClienteAEliminar(null);
 
@@ -109,7 +100,7 @@ const handleDelete = async () => {
   // Cargar clientes desde backend
   useEffect(() => {
     axios
-      .get("http://192.168.11.104:8080/api/clientes")
+      .get("http://localhost:8080/api/clientes")
       .then((res) => {
         setClientes(res.data);
       })

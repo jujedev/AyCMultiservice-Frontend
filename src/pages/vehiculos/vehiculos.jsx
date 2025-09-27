@@ -66,7 +66,7 @@ export default function Vehiculos() {
     if (!vehiculoAEliminar) return;
 
     try {
-      await axios.delete(`http://192.168.11.104:8080/api/vehiculos/${vehiculoAEliminar.id}`);
+      await axios.delete(`http://localhost:8080/api/vehiculos/${vehiculoAEliminar.id}`);
       setVehiculos(vehiculos.filter((c) => c.id !== vehiculoAEliminar.id));
       setVehiculoAEliminar(null);
 
@@ -88,7 +88,7 @@ export default function Vehiculos() {
   // Cargar vehículos desde backend
   useEffect(() => {
     axios
-      .get("http://192.168.11.104:8080/api/vehiculos")
+      .get("http://localhost:8080/api/vehiculos")
       .then((res) => {
         setVehiculos(res.data);
       })
